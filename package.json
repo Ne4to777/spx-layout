@@ -4,27 +4,90 @@
   "private": true,
   "scripts": {
     "dev": "node dev/init.js && webpack-dev-server --open --config dev/webpack.dev.js",
-    "prod": "webpack --config dev/webpack.prod.js",
-    "build": "webpack --config dev/webpack.build.js",
-    "commit": "webpack --config dev/webpack.commit.js",
-    "copy": "webpack --config dev/webpack.copy.js",
-    "patchPublish": "npm run build && cd publish && npm version patch && npm publish"
+    "copy": "node dev/copy.js",
+    "patch-publish": "cd publish && npm version patch && npm publish",
+    "publish-prepare": "rollup -c dev/rollup.config.js && node dev/copy-assets.js",
+    "deploy": "npm run publish-prepare && node dev/deploy.js",
+    "test": "jest"
   },
   "sideEffects": false,
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-plugin-syntax-async-functions": "^6.1.4",
-    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-plugin-transform-regenerator": "^6.1.4",
-    "babel-polyfill": "^6.1.4",
-    "babel-preset-env": "^1.7.0",
-    "copy-webpack-plugin": "^5.0.0",
-    "cpass": "^2.0.4",
-    "sp-rest-proxy": "^2.7.9-beta2"
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-modules-commonjs": "^7.5.0",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.17.2",
+    "jest": "^24.8.0",
+    "rollup": "^1.16.7",
+    "webpack-cli": "latest",
+    "webpack-dev-server": "^3.7.2"
   },
   "dependencies": {
-    "spx-com": "^1.0.22"
+    "axios": ">=0.18.1",
+    "babel-jest": "^24.9.0",
+    "cpass": "^2.0.4",
+    "crypto-js": "^3.1.9-1",
+    "html-webpack-plugin": "^3.2.0",
+    "lazy.js": "^0.5.1",
+    "robocopy": "^0.1.16",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.0.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^5.1.1",
+    "sp-rest-proxy": "^2.8.10",
+    "webpack": "^4.39.1"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/env",
+        {
+          "modules": false,
+          "targets": {
+            "browsers": "> 0.05%, not ie < 10, not op_mini all",
+            "node": "current"
+          }
+        }
+      ]
+    ],
+    "env": {
+      "test": {
+        "presets": [
+          [
+            "@babel/env",
+            {
+              "modules": false
+            }
+          ]
+        ],
+        "plugins": [
+          "@babel/plugin-transform-modules-commonjs",
+          "@babel/plugin-transform-runtime"
+        ]
+      }
+    }
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "<rootDir>/dev/setupFiles/",
+      "<rootDir>/publish/"
+    ],
+    "setupFiles": [
+      "<rootDir>/dev/setupFiles/sp.assembly.js"
+    ],
+    "testURL": "http://localhost:3000/"
+  },
+  "eslintConfig": {
+    "env": {
+      "jest": true
+    },
+    "globals": {
+      "SP": "readonly",
+      "Microsoft": "readonly",
+      "window": "readonly"
+    }
   }
 }

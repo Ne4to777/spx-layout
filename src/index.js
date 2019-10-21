@@ -1,3 +1,7 @@
-import spx from 'spx-com';
-spx.setCustomUsersList({ webTitle: 'AM', listTitle: 'UsersAD' });
-window.spx = spx;
+import spx from 'spx-com'
+
+spx.setCustomUsersList({
+	webTitle: 'AM',
+	listTitle: 'UsersAD'
+})
+window.spx = spx
